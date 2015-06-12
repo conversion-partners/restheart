@@ -85,6 +85,11 @@ static-resources-mounts:
 # GetRoleHandler bound to /_logic/roles that returns the current user authentication status and eventually its roles
 
 application-logic-mounts:
+    - what: org.restheart.handlers.applicationlogic.FileHandler
+      where: /ping
+      secured: false
+      args:
+          msg: "file request"
     - what: org.restheart.handlers.applicationlogic.PingHandler
       where: /ping
       secured: false
@@ -141,10 +146,10 @@ metadata-named-singletons:
 
 idm:    
     implementation-class: org.restheart.security.impl.SimpleFileIdentityManager
-    conf-file: ./etc/security.yml
+    conf-file: /home/jesse/git/restheart/etc/security.yml
 access-manager:    
     implementation-class: org.restheart.security.impl.SimpleAccessManager
-    conf-file: ./etc/security.yml
+    conf-file: /home/jesse/git/restheart/etc/security.yml
 
 # authentication token
 
