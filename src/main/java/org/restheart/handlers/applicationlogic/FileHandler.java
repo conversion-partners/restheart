@@ -34,6 +34,8 @@ import com.mongodb.gridfs.GridFSDBFile;
 
 import java.io.IOException;
 import java.time.Instant;
+import java.util.Comparator;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -75,8 +77,20 @@ public class FileHandler extends ApplicationLogicHandler {
         String fileName = url.substring( url.lastIndexOf('/')+1, url.length() );
         
         GridFS gridfs = new GridFS(getDatabase().getDB(bucket[0]), bucket[1]);
-        GridFSDBFile dbsfile = gridfs.findOne(new BasicDBObject("filename", fileName));
+        
+        
+        //GridFSDBFile dbsfile = gridfs.findOne(new BasicDBObject("filename", fileName));
 
+        List<GridFSDBFile> dbsfiles = gridfs.find(new BasicDBObject("filename", fileName));
+        
+        GridFSDBFile dbsfile = null;
+/*        for (GridFSDBFile file : dbsfiles) {
+			dbsfile = file;
+			System.out.println(file.getUploadDate());
+		}*/
+        
+        dbsfile = dbsfiles.get(dbsfiles.size() - 1);
+        
         if (dbsfile == null) {
             fileNotFound(context, exchange);
         } else {
