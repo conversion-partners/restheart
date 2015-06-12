@@ -86,10 +86,11 @@ static-resources-mounts:
 
 application-logic-mounts:
     - what: org.restheart.handlers.applicationlogic.FileHandler
-      where: /ping
+      where: /file
       secured: false
       args:
           msg: "file request"
+          url: /_logic/file
     - what: org.restheart.handlers.applicationlogic.PingHandler
       where: /ping
       secured: false

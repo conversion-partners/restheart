@@ -70,10 +70,12 @@ public class FileHandler extends ApplicationLogicHandler {
     @Override
     public void handleRequest(HttpServerExchange exchange, RequestContext context) throws Exception {
         LOGGER.debug("GET " + exchange.getRequestURL());
-        final String bucket = extractBucketName(context.getCollectionName());
-
-        GridFS gridfs = new GridFS(getDatabase().getDB(context.getDBName()), bucket);
-        GridFSDBFile dbsfile = gridfs.findOne(new BasicDBObject("_id", context.getDocumentId()));
+        final String[] bucket = extractDbAndBucketName(context.getUnmappedRequestUri());
+        String url = exchange.getRequestURL();
+        String fileName = url.substring( url.lastIndexOf('/')+1, url.length() );
+        
+        GridFS gridfs = new GridFS(getDatabase().getDB(bucket[0]), bucket[1]);
+        GridFSDBFile dbsfile = gridfs.findOne(new BasicDBObject("filename", fileName));
 
         if (dbsfile == null) {
             fileNotFound(context, exchange);
@@ -136,8 +138,24 @@ public class FileHandler extends ApplicationLogicHandler {
         return dbsfile.getFilename() != null ? dbsfile.getFilename() : dbsfile.getId().toString();
     }
 
-    static String extractBucketName(final String collectionName) {
-        return collectionName.split("\\.")[0];
+    static String[] extractDbAndBucketName(final String collectionName) {
+    	
+    	String[] pathParts = collectionName.split("/");
+    	for (int i = 0; i < pathParts.length; i++) {
+    		String[] file = pathParts[i].split("\\.");
+    		if(file.length > 1){
+    			if(file[1].equals("files")){
+    				 String[] bucket = new String[2];
+					bucket [0] = pathParts[i - 1];
+    				bucket [1] = file[0];
+    				return bucket;
+    			}
+    		}
+			
+		}
+    	
+    	
+        return new String[2];
     }
 
 /*    GetFileBinaryHandler(Object object, Object object0) {
