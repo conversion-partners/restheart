@@ -14,6 +14,10 @@ users:
     - userid: user2
       password: changeit
       roles: [users]
+      
+    - userid: easydrain
+      password: changeit
+      roles: [users]
 
     - userid: admin
       password: changeit
@@ -49,6 +53,9 @@ permissions:
 # users with role 'users' can do anything on the collection /publicdb/{username}
     - role: users
       predicate: path-template[value="/publicdb/{username}"] and equals[%u, "${username}"] 
+      
+    - role: users
+      predicate: path-template[value="/{username}/"] and equals[%u, "${username}"] 
 
 # users with role 'users' can do anything on documents of the collection /publicdb/{username}
     - role: users
